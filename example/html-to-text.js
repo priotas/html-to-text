@@ -1,18 +1,24 @@
-var path = require('path');
-
-var htmlToText = require('../lib/html-to-text');
+const path = require('path');
+const fs = require('fs');
+const { htmlToText } = require('..');
 
 console.log('fromString:');
-var text = htmlToText.fromString('<h1>Hello World</h1>', {
+const text = htmlToText('<h1>Hello World</h1>', {
   wordwrap: 130
 });
 console.log(text);
 console.log();
 
 console.log('fromFile:');
-htmlToText.fromFile(path.join(__dirname, 'test.html'), {
-  tables: ['#invoice', '.address']
-}, function(err, text) {
-  if (err) return console.error(err);
-  console.log(text);
-});
+
+// Callback version
+const fromFile = (file) => {
+  fs.readFile(file, 'utf8', (err, str) => {
+    if (err) {
+      throw err;
+    }
+    console.log(htmlToText(str));
+  });
+};
+
+fromFile(path.join(__dirname, 'test.html'));

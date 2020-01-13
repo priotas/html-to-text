@@ -1,0 +1,13 @@
+declare function formatText(elem: any, options: any): any;
+declare function formatImage(elem: any, options: any): string;
+declare function formatLineBreak(elem: any, fn: Function, options: any): string;
+declare function formatParagraph(elem: any, fn: Function, options: any): string;
+declare function formatHeading(elem: any, fn: Function, options: any): string;
+declare function formatAnchor(elem: any, fn: Function, options: any): any;
+declare function formatHorizontalLine(_elem: any, _fn: Function, options: any): string;
+declare function formatListItem(prefix: string, elem: any, fn: Function, options: any): string;
+declare function formatUnorderedList(elem: any, fn: Function, options: any): string;
+declare function formatOrderedList(elem: any, fn: Function, options: any): string;
+declare function formatTable(elem: any, fn: Function, options: any): string;
+declare function formatBlockquote(elem: any, fn: Function, options: any): string;
+export { formatAnchor as anchor, formatBlockquote as blockquote, formatHeading as heading, formatHorizontalLine as horizontalLine, formatImage as image, formatLineBreak as lineBreak, formatListItem as listItem, formatOrderedList as orderedList, formatParagraph as paragraph, formatTable as table, formatText as text, formatUnorderedList as unorderedList };
