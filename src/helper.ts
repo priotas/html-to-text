@@ -1,21 +1,20 @@
-var zip = require('lodash/zip');
-var trimEnd = require('lodash/trimEnd');
+import { trimEnd, zip } from 'lodash';
 
 // Split a long word up to fit within the word wrap limit.  Use either a
 // character to split looking back from the word wrap limit, or
 // truncate to the word wrap limit.
-function splitLongWord(word, options) {
-  var wrapCharacters = options.longWordSplit.wrapCharacters || [];
-  var forceWrapOnLimit = options.longWordSplit.forceWrapOnLimit || false;
-  var max = options.wordwrap;
+function splitLongWord(word: string, options: any) {
+  const wrapCharacters = options.longWordSplit.wrapCharacters || [];
+  const forceWrapOnLimit = options.longWordSplit.forceWrapOnLimit || false;
+  const max = options.wordwrap;
 
-  var fuseWord = [];
-  var idx = 0;
+  const fuseWord = [];
+  let idx = 0;
   while (word.length > max) {
-    var firstLine = word.substr(0, max);
-    var remainingChars = word.substr(max);
+    const firstLine = word.substr(0, max);
+    const remainingChars = word.substr(max);
 
-    var splitIndex = firstLine.lastIndexOf(wrapCharacters[idx]);
+    const splitIndex = firstLine.lastIndexOf(wrapCharacters[idx]);
 
     if (splitIndex > -1) {
       // We've found a character to split on, store before the split then check if we
@@ -49,24 +48,29 @@ function splitLongWord(word, options) {
   return fuseWord.join('\n');
 }
 
-exports.wordwrap = function wordwrap(text, options) {
-  var max = options.wordwrap;
-  var preserveNewlines = options.preserveNewlines;
-  var length = options.lineCharCount;
+const helper: any = {};
 
+helper.wordwrap = function wordwrap(text: string, options: any) {
+  const max = options.wordwrap;
+  const preserveNewlines = options.preserveNewlines;
+  let length = options.lineCharCount;
   // Preserve leading space
-  var result = text.startsWith(' ') ? ' ' : '';
+  let result = text.startsWith(' ') ? ' ' : '';
   length += result.length;
-  var buffer = [];
+  const buffer: string[] = [];
   // Split the text into words, decide to preserve new lines or not.
-  var words = preserveNewlines
+  const words = preserveNewlines
     ? text.trim().replace(/\n/g, '\n ').split(/\ +/)
     : text.trim().split(/\s+/);
 
   // Determine where to end line word by word.
-  words.forEach(function(word) {
+  words.forEach(function (word) {
     // Add buffer to result if we can't fit any more words in the buffer.
-    if ((max || max === 0) && length > 0 && ((length + word.length > max) || (length + word.indexOf('\n') > max))) {
+    if (
+      (max || max === 0) &&
+      length > 0 &&
+      (length + word.length > max || length + word.indexOf('\n') > max)
+    ) {
       // Concat buffer and add it to the result
       result += buffer.join(' ') + '\n';
       // Reset buffer and length
@@ -74,7 +78,7 @@ exports.wordwrap = function wordwrap(text, options) {
     }
 
     // Check if the current word is long enough to be wrapped
-    if ((max || max === 0) && (options.longWordSplit) && (word.length > max)) {
+    if ((max || max === 0) && options.longWordSplit && word.length > max) {
       word = splitLongWord(word, options);
     }
 
@@ -110,30 +114,38 @@ exports.wordwrap = function wordwrap(text, options) {
   return result;
 };
 
-exports.arrayZip = function arrayZip(array) {
+helper.arrayZip = function arrayZip(array: Array<any>) {
   return zip.apply(null, array);
 };
 
-exports.splitCssSearchTag = function splitCssSearchTag(tagString) {
-  function getParams(re, string) {
-    var captures = [], found;
+helper.splitCssSearchTag = function splitCssSearchTag(tagString: string) {
+  function getParams(re: RegExp, string: string) {
+    var captures = [],
+      found;
     while ((found = re.exec(string)) !== null) {
       captures.push(found[1]);
     }
     return captures;
   }
 
-  var splitTag = {};
-  var elementRe = /(^\w*)/g;
-  splitTag.element = elementRe.exec(tagString)[1];
-  splitTag.classes = getParams( /\.([\d\w-]*)/g, tagString);
-  splitTag.ids = getParams( /#([\d\w-]*)/g, tagString);
+  const splitTag: any = {};
+  const elementRe = /(^\w*)/g;
+  const element = elementRe.exec(tagString);
+  splitTag.element = element && element[1];
+  splitTag.classes = getParams(/\.([\d\w-]*)/g, tagString);
+  splitTag.ids = getParams(/#([\d\w-]*)/g, tagString);
 
   return splitTag;
 };
 
-exports.replaceAll = function replaceAll(str, find, replace) {
-  var reg = new RegExp(find, 'g');
+helper.replaceAll = function replaceAll(
+  str: string,
+  find: string,
+  replace: string
+) {
+  const reg = new RegExp(find, 'g');
 
   return str.replace(reg, replace);
 };
+
+export default helper;

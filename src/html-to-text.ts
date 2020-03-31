@@ -1,54 +1,55 @@
-var includes = require('lodash/includes');
-var trimEnd = require('lodash/trimEnd');
-var htmlparser = require('htmlparser2');
+import { includes, trimEnd } from 'lodash';
 
-var helper = require('./helper');
-var defaultFormat = require('./formatter');
+import { Parser, DefaultHandler } from 'htmlparser2';
+
+import helper from './helper';
+import * as defaultFormat from './formatter';
 
 // Which type of tags should not be parsed
-var SKIP_TYPES = [
-  'style',
-  'script'
-];
+var SKIP_TYPES = ['style', 'script'];
 
-function htmlToText(html, options) {
-  options = Object.assign({
-    wordwrap: 80,
-    tables: [],
-    preserveNewlines: false,
-    uppercaseHeadings: true,
-    singleNewLineParagraphs: false,
-    hideLinkHrefIfSameAsText: false,
-    linkHrefBaseUrl: null,
-    noLinkBrackets: false,
-    noAnchorUrl: true,
-    baseElement: 'body',
-    returnDomByDefault: true,
-    format: {},
-    decodeOptions: {
-      isAttributeValue: false,
-      strict: false
+function htmlToText(html: string, options: any) {
+  options = Object.assign(
+    {
+      wordwrap: 80,
+      tables: [],
+      preserveNewlines: false,
+      uppercaseHeadings: true,
+      singleNewLineParagraphs: false,
+      hideLinkHrefIfSameAsText: false,
+      linkHrefBaseUrl: null,
+      noLinkBrackets: false,
+      noAnchorUrl: true,
+      baseElement: 'body',
+      returnDomByDefault: true,
+      format: {},
+      decodeOptions: {
+        isAttributeValue: false,
+        strict: false
+      },
+      longWordSplit: {
+        wrapCharacters: [],
+        forceWrapOnLimit: false
+      },
+      unorderedListItemPrefix: ' * '
     },
-    longWordSplit: {
-      wrapCharacters: [],
-      forceWrapOnLimit: false
-    },
-    unorderedListItemPrefix: ' * '
-  }, options || {});
+    options || {}
+  );
 
-  var handler = new htmlparser.DefaultHandler(function (error, dom) {
-
-  }, {
-    verbose: true
-  });
-  new htmlparser.Parser(handler).parseComplete(html);
+  const handler = new DefaultHandler();
+  new Parser(handler).parseComplete(html);
 
   options.lineCharCount = 0;
 
   var result = '';
-  var baseElements = Array.isArray(options.baseElement) ? options.baseElement : [options.baseElement];
+  var baseElements = Array.isArray(options.baseElement)
+    ? options.baseElement
+    : [options.baseElement];
   for (var idx = 0; idx < baseElements.length; ++idx) {
-    result += walk(filterBody(handler.dom, options, baseElements[idx]), options);
+    result += walk(
+      filterBody(handler.dom, options, baseElements[idx]),
+      options
+    );
   }
   return trimEnd(result);
 }
@@ -60,14 +61,24 @@ function filterBody(dom, options, baseElement) {
 
   function walk(dom) {
     if (result) return;
-    dom.forEach(function(elem) {
+    dom.forEach(function (elem) {
       if (result) return;
       if (elem.name === splitTag.element) {
-        var documentClasses = elem.attribs && elem.attribs.class ? elem.attribs.class.split(" ") : [];
-        var documentIds = elem.attribs && elem.attribs.id ? elem.attribs.id.split(" ") : [];
+        var documentClasses =
+          elem.attribs && elem.attribs.class
+            ? elem.attribs.class.split(' ')
+            : [];
+        var documentIds =
+          elem.attribs && elem.attribs.id ? elem.attribs.id.split(' ') : [];
 
-        if ((splitTag.classes.every(function (val) { return documentClasses.indexOf(val) >= 0; })) &&
-          (splitTag.ids.every(function (val) { return documentIds.indexOf(val) >= 0; }))) {
+        if (
+          splitTag.classes.every(function (val) {
+            return documentClasses.indexOf(val) >= 0;
+          }) &&
+          splitTag.ids.every(function (val) {
+            return documentIds.indexOf(val) >= 0;
+          })
+        ) {
           result = [elem];
           return;
         }
@@ -86,18 +97,18 @@ function containsTable(attr, tables) {
     return key.substr(1);
   }
   function checkPrefix(prefix) {
-    return function(key) {
+    return function (key) {
       return key.startsWith(prefix);
     };
   }
   function filterByPrefix(tables, prefix) {
-    return tables
-      .filter(checkPrefix(prefix))
-      .map(removePrefix);
+    return tables.filter(checkPrefix(prefix)).map(removePrefix);
   }
   var classes = filterByPrefix(tables, '.');
   var ids = filterByPrefix(tables, '#');
-  return attr && (includes(classes, attr['class']) || includes(ids, attr['id']));
+  return (
+    attr && (includes(classes, attr['class']) || includes(ids, attr['id']))
+  );
 }
 
 function walk(dom, options, result) {
@@ -111,10 +122,10 @@ function walk(dom, options, result) {
     return result;
   }
 
-  dom.forEach(function(elem) {
-    switch(elem.type) {
+  dom.forEach(function (elem) {
+    switch (elem.type) {
       case 'tag':
-        switch(elem.name.toLowerCase()) {
+        switch (elem.name.toLowerCase()) {
           case 'img':
             result += format.image(elem, options);
             break;
@@ -183,6 +194,6 @@ function walk(dom, options, result) {
   return result;
 }
 
-exports.fromString = function(str, options) {
+exports.fromString = function (str, options) {
   return htmlToText(str, options || {});
 };
