@@ -1,13 +1,11 @@
-var includes = require('lodash/includes');
-var trimEnd = require('lodash/trimEnd');
-var htmlparser = require('htmlparser2');
-var helper = require('./helper');
-var defaultFormat = require('./formatter');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = require("lodash");
+const htmlparser2_1 = require("htmlparser2");
+const helper_1 = require("./helper");
+const defaultFormat = require("./formatter");
 // Which type of tags should not be parsed
-var SKIP_TYPES = [
-    'style',
-    'script'
-];
+const SKIP_TYPES = ['style', 'script'];
 function htmlToText(html, options) {
     options = Object.assign({
         wordwrap: 80,
@@ -32,22 +30,22 @@ function htmlToText(html, options) {
         },
         unorderedListItemPrefix: ' * '
     }, options || {});
-    var handler = new htmlparser.DefaultHandler(function (error, dom) {
-    }, {
-        verbose: true
-    });
-    new htmlparser.Parser(handler).parseComplete(html);
+    const handler = new htmlparser2_1.DefaultHandler();
+    new htmlparser2_1.Parser(handler).parseComplete(html);
     options.lineCharCount = 0;
-    var result = '';
-    var baseElements = Array.isArray(options.baseElement) ? options.baseElement : [options.baseElement];
-    for (var idx = 0; idx < baseElements.length; ++idx) {
+    let result = '';
+    let baseElements = Array.isArray(options.baseElement)
+        ? options.baseElement
+        : [options.baseElement];
+    for (let idx = 0; idx < baseElements.length; ++idx) {
         result += walk(filterBody(handler.dom, options, baseElements[idx]), options);
     }
-    return trimEnd(result);
+    return lodash_1.trimEnd(result);
 }
+exports.htmlToText = htmlToText;
 function filterBody(dom, options, baseElement) {
-    var result = null;
-    var splitTag = helper.splitCssSearchTag(baseElement);
+    let result = null;
+    const splitTag = helper_1.default.splitCssSearchTag(baseElement);
     function walk(dom) {
         if (result)
             return;
@@ -55,10 +53,16 @@ function filterBody(dom, options, baseElement) {
             if (result)
                 return;
             if (elem.name === splitTag.element) {
-                var documentClasses = elem.attribs && elem.attribs.class ? elem.attribs.class.split(" ") : [];
-                var documentIds = elem.attribs && elem.attribs.id ? elem.attribs.id.split(" ") : [];
-                if ((splitTag.classes.every(function (val) { return documentClasses.indexOf(val) >= 0; })) &&
-                    (splitTag.ids.every(function (val) { return documentIds.indexOf(val) >= 0; }))) {
+                const documentClasses = elem.attribs && elem.attribs.class
+                    ? elem.attribs.class.split(' ')
+                    : [];
+                const documentIds = elem.attribs && elem.attribs.id ? elem.attribs.id.split(' ') : [];
+                if (splitTag.classes.every(function (val) {
+                    return documentClasses.indexOf(val) >= 0;
+                }) &&
+                    splitTag.ids.every(function (val) {
+                        return documentIds.indexOf(val) >= 0;
+                    })) {
                     result = [elem];
                     return;
                 }
@@ -82,20 +86,18 @@ function containsTable(attr, tables) {
         };
     }
     function filterByPrefix(tables, prefix) {
-        return tables
-            .filter(checkPrefix(prefix))
-            .map(removePrefix);
+        return tables.filter(checkPrefix(prefix)).map(removePrefix);
     }
-    var classes = filterByPrefix(tables, '.');
-    var ids = filterByPrefix(tables, '#');
-    return attr && (includes(classes, attr['class']) || includes(ids, attr['id']));
+    const classes = filterByPrefix(tables, '.');
+    const ids = filterByPrefix(tables, '#');
+    return (attr && (lodash_1.includes(classes, attr['class']) || lodash_1.includes(ids, attr['id'])));
 }
 function walk(dom, options, result) {
     if (arguments.length < 3) {
         result = '';
     }
-    var whiteSpaceRegex = /\s$/;
-    var format = Object.assign({}, defaultFormat, options.format);
+    const whiteSpaceRegex = /\s$/;
+    const format = Object.assign({}, defaultFormat, options.format);
     if (!dom) {
         return result;
     }
@@ -109,7 +111,7 @@ function walk(dom, options, result) {
                     case 'a':
                         // Inline element needs its leading space to be trimmed if `result`
                         // currently ends with whitespace
-                        elem.trimLeadingSpace = whiteSpaceRegex.test(result);
+                        elem.trimLeadingSpace = whiteSpaceRegex.test(result || '');
                         result += format.anchor(elem, walk, options);
                         break;
                     case 'p':
@@ -136,7 +138,7 @@ function walk(dom, options, result) {
                         result += format.orderedList(elem, walk, options);
                         break;
                     case 'pre':
-                        var newOptions = Object.assign({}, options);
+                        const newOptions = Object.assign({}, options);
                         newOptions.isInPre = true;
                         result += format.paragraph(elem, walk, newOptions);
                         break;
@@ -156,20 +158,23 @@ function walk(dom, options, result) {
                 if (elem.data !== '\r\n') {
                     // Text needs its leading space to be trimmed if `result`
                     // currently ends with whitespace
-                    elem.trimLeadingSpace = whiteSpaceRegex.test(result);
+                    elem.trimLeadingSpace = whiteSpaceRegex.test(result || '');
                     result += format.text(elem, options);
                 }
                 break;
             default:
-                if (!includes(SKIP_TYPES, elem.type)) {
+                if (!lodash_1.includes(SKIP_TYPES, elem.type)) {
                     result = walk(elem.children || [], options, result);
                 }
         }
-        options.lineCharCount = result.length - (result.lastIndexOf('\n') + 1);
+        if (result) {
+            options.lineCharCount = result.length - (result.lastIndexOf('\n') + 1);
+        }
     });
     return result;
 }
-exports.fromString = function (str, options) {
+function fromString(str, options) {
     return htmlToText(str, options || {});
-};
+}
+exports.fromString = fromString;
 //# sourceMappingURL=html-to-text.js.map

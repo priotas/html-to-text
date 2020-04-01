@@ -6,7 +6,7 @@ import helper from './helper';
 import * as defaultFormat from './formatter';
 
 // Which type of tags should not be parsed
-var SKIP_TYPES = ['style', 'script'];
+const SKIP_TYPES = ['style', 'script'];
 
 function htmlToText(html: string, options: any) {
   options = Object.assign(
@@ -41,11 +41,11 @@ function htmlToText(html: string, options: any) {
 
   options.lineCharCount = 0;
 
-  var result = '';
-  var baseElements = Array.isArray(options.baseElement)
+  let result: string = '';
+  let baseElements = Array.isArray(options.baseElement)
     ? options.baseElement
     : [options.baseElement];
-  for (var idx = 0; idx < baseElements.length; ++idx) {
+  for (let idx = 0; idx < baseElements.length; ++idx) {
     result += walk(
       filterBody(handler.dom, options, baseElements[idx]),
       options
@@ -54,28 +54,28 @@ function htmlToText(html: string, options: any) {
   return trimEnd(result);
 }
 
-function filterBody(dom, options, baseElement) {
-  var result = null;
+function filterBody(dom: any, options: any, baseElement: any) {
+  let result: any = null;
 
-  var splitTag = helper.splitCssSearchTag(baseElement);
+  const splitTag = helper.splitCssSearchTag(baseElement);
 
-  function walk(dom) {
+  function walk(dom: any) {
     if (result) return;
-    dom.forEach(function (elem) {
+    dom.forEach(function (elem: any) {
       if (result) return;
       if (elem.name === splitTag.element) {
-        var documentClasses =
+        const documentClasses =
           elem.attribs && elem.attribs.class
             ? elem.attribs.class.split(' ')
             : [];
-        var documentIds =
+        const documentIds =
           elem.attribs && elem.attribs.id ? elem.attribs.id.split(' ') : [];
 
         if (
-          splitTag.classes.every(function (val) {
+          splitTag.classes.every(function (val: any) {
             return documentClasses.indexOf(val) >= 0;
           }) &&
-          splitTag.ids.every(function (val) {
+          splitTag.ids.every(function (val: any) {
             return documentIds.indexOf(val) >= 0;
           })
         ) {
@@ -90,39 +90,39 @@ function filterBody(dom, options, baseElement) {
   return options.returnDomByDefault ? result || dom : result;
 }
 
-function containsTable(attr, tables) {
+function containsTable(attr: any, tables: any) {
   if (tables === true) return true;
 
-  function removePrefix(key) {
+  function removePrefix(key: string) {
     return key.substr(1);
   }
-  function checkPrefix(prefix) {
-    return function (key) {
+  function checkPrefix(prefix: string) {
+    return function (key: string) {
       return key.startsWith(prefix);
     };
   }
-  function filterByPrefix(tables, prefix) {
+  function filterByPrefix(tables: any, prefix: string) {
     return tables.filter(checkPrefix(prefix)).map(removePrefix);
   }
-  var classes = filterByPrefix(tables, '.');
-  var ids = filterByPrefix(tables, '#');
+  const classes = filterByPrefix(tables, '.');
+  const ids = filterByPrefix(tables, '#');
   return (
     attr && (includes(classes, attr['class']) || includes(ids, attr['id']))
   );
 }
 
-function walk(dom, options, result) {
+function walk(dom: any, options: any, result?: string) {
   if (arguments.length < 3) {
     result = '';
   }
-  var whiteSpaceRegex = /\s$/;
-  var format = Object.assign({}, defaultFormat, options.format);
+  const whiteSpaceRegex = /\s$/;
+  const format = Object.assign({}, defaultFormat, options.format);
 
   if (!dom) {
     return result;
   }
 
-  dom.forEach(function (elem) {
+  dom.forEach(function (elem: any) {
     switch (elem.type) {
       case 'tag':
         switch (elem.name.toLowerCase()) {
@@ -132,7 +132,7 @@ function walk(dom, options, result) {
           case 'a':
             // Inline element needs its leading space to be trimmed if `result`
             // currently ends with whitespace
-            elem.trimLeadingSpace = whiteSpaceRegex.test(result);
+            elem.trimLeadingSpace = whiteSpaceRegex.test(result || '');
             result += format.anchor(elem, walk, options);
             break;
           case 'p':
@@ -159,7 +159,7 @@ function walk(dom, options, result) {
             result += format.orderedList(elem, walk, options);
             break;
           case 'pre':
-            var newOptions = Object.assign({}, options);
+            const newOptions = Object.assign({}, options);
             newOptions.isInPre = true;
             result += format.paragraph(elem, walk, newOptions);
             break;
@@ -179,7 +179,7 @@ function walk(dom, options, result) {
         if (elem.data !== '\r\n') {
           // Text needs its leading space to be trimmed if `result`
           // currently ends with whitespace
-          elem.trimLeadingSpace = whiteSpaceRegex.test(result);
+          elem.trimLeadingSpace = whiteSpaceRegex.test(result || '');
           result += format.text(elem, options);
         }
         break;
@@ -189,11 +189,15 @@ function walk(dom, options, result) {
         }
     }
 
-    options.lineCharCount = result.length - (result.lastIndexOf('\n') + 1);
+    if (result) {
+      options.lineCharCount = result.length - (result.lastIndexOf('\n') + 1);
+    }
   });
   return result;
 }
 
-exports.fromString = function (str, options) {
+function fromString(str: string, options: any) {
   return htmlToText(str, options || {});
-};
+}
+
+export { htmlToText, fromString };

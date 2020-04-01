@@ -1,29 +1,24 @@
 #!/usr/bin/env node
-var parseArgs = require('minimist');
 
-var htmlToText = require('../lib/html-to-text');
+import * as parseArgs from 'minimist';
 
-var argv = parseArgs(process.argv.slice(2), {
-  string: [
-    'tables'
-  ],
-  boolean: [
-    'noLinkBrackets',
-    'ignoreHref',
-    'ignoreImage'
-  ],
+import { htmlToText } from './html-to-text';
+
+const argv = parseArgs(process.argv.slice(2), {
+  string: ['tables'],
+  boolean: ['noLinkBrackets', 'ignoreHref', 'ignoreImage'],
   alias: {
     'ignore-href': 'ignoreHref',
     'ignore-image': 'ignoreImage'
   },
   default: {
-    'wordwrap': 80
+    wordwrap: 80
   }
 });
 
 argv.tables = interpretTables(argv.tables);
 
-var text = '';
+let text = '';
 
 process.title = 'html-to-text';
 
@@ -34,11 +29,11 @@ process.stdin.on('data', function data(data) {
 });
 
 process.stdin.on('end', function end() {
-  text = htmlToText.fromString(text, argv);
+  text = htmlToText(text, argv);
   process.stdout.write(text + '\n', 'utf-8');
 });
 
-function interpretTables(tables) {
+function interpretTables(tables: any) {
   if (!tables || tables === '' || tables === 'false') {
     return [];
   }

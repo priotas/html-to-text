@@ -1,6 +1,6 @@
 //import {} from 'domhandler';
-import { max, compact, times, get, trimStart, padEnd } from 'lodash';
 import { decode } from 'he';
+import { compact, get, max, padEnd,times, trimStart } from 'lodash';
 
 import helper from './helper';
 

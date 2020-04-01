@@ -6,9 +6,10 @@
   "scripts": {
     "build": "rm -Rf dist && tsc",
     "test": "jest",
-    "example": "node ./example/html-to-text.js",
-    "lint": "eslint .",
-    "prepublish": "npm test && npm build"
+    "prepublish": "npm test && npm build",
+    "prettier:check": "prettier --ignore-path .eslintignore --check '**/*.{js,jsx,ts,tsx,md,json}'",
+    "lint": "yarn prettier:check && eslint --ext .js,.jsx,.ts,.tsx .",
+    "lint:fix": "eslint --ext .js,.jsx,.ts,.tsx. --fix; prettier --ignore-path .eslintignore --write '**/*.{js,jsx,ts,tsx,md,json}'"
   },
   "author": {
     "name": "Malte Legenhausen",
@@ -26,6 +27,10 @@
   "dependencies": {
     "@types/he": "^1.1.1",
     "@types/lodash": "^4.14.149",
+    "@types/minimist": "^1.2.0",
+    "@types/node": "^13.9.8",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-simple-import-sort": "^5.0.2",
     "he": "^1.2.0",
     "htmlparser2": "^4.1.0",
     "lodash": "^4.17.15",
