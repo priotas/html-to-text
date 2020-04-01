@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 //import {} from 'domhandler';
-const lodash_1 = require("lodash");
 const he_1 = require("he");
+const lodash_1 = require("lodash");
 const helper_1 = require("./helper");
 function formatText(elem, options) {
     let text = elem.data || '';
@@ -14,7 +14,7 @@ function formatText(elem, options) {
         return helper_1.default.wordwrap(elem.trimLeadingSpace ? lodash_1.trimStart(text) : text, options);
     }
 }
-exports.formatText = formatText;
+exports.text = formatText;
 function formatImage(elem, options) {
     if (options.ignoreImage) {
         return '';
@@ -31,11 +31,11 @@ function formatImage(elem, options) {
     }
     return result;
 }
-exports.formatImage = formatImage;
+exports.image = formatImage;
 function formatLineBreak(elem, fn, options) {
     return '\n' + fn(elem.children, options);
 }
-exports.formatLineBreak = formatLineBreak;
+exports.lineBreak = formatLineBreak;
 function formatParagraph(elem, fn, options) {
     const paragraph = fn(elem.children, options);
     if (options.singleNewLineParagraphs) {
@@ -45,7 +45,7 @@ function formatParagraph(elem, fn, options) {
         return `${paragraph} '\n\n`;
     }
 }
-exports.formatParagraph = formatParagraph;
+exports.paragraph = formatParagraph;
 function formatHeading(elem, fn, options) {
     let heading = fn(elem.children, options);
     if (options.uppercaseHeadings) {
@@ -53,7 +53,7 @@ function formatHeading(elem, fn, options) {
     }
     return heading + '\n';
 }
-exports.formatHeading = formatHeading;
+exports.heading = formatHeading;
 // If we have both href and anchor text, format it in a useful manner:
 // - "anchor text [href]"
 // Otherwise if we have only anchor text or an href, we return the part we have:
@@ -93,11 +93,11 @@ function formatAnchor(elem, fn, options) {
     options.lineCharCount = storedCharCount;
     return formatText({ data: result || href, trimLeadingSpace: elem.trimLeadingSpace }, options);
 }
-exports.formatAnchor = formatAnchor;
+exports.anchor = formatAnchor;
 function formatHorizontalLine(_elem, _fn, options) {
     return '\n' + '-'.repeat(options.wordwrap) + '\n\n';
 }
-exports.formatHorizontalLine = formatHorizontalLine;
+exports.horizontalLine = formatHorizontalLine;
 function formatListItem(prefix, elem, fn, options) {
     options = Object.assign({}, options);
     // Reduce the wordwrap for sub elements.
@@ -111,7 +111,7 @@ function formatListItem(prefix, elem, fn, options) {
     // Add first prefix and line break at the end.
     return prefix + text + '\n';
 }
-exports.formatListItem = formatListItem;
+exports.listItem = formatListItem;
 const whiteSpaceRegex = /^\s*$/;
 function formatUnorderedList(elem, fn, options) {
     // if this list is a child of a list-item,
@@ -127,7 +127,7 @@ function formatUnorderedList(elem, fn, options) {
     });
     return result + '\n';
 }
-exports.formatUnorderedList = formatUnorderedList;
+exports.unorderedList = formatUnorderedList;
 function formatOrderedList(elem, fn, options) {
     const nestedList = lodash_1.get(elem, 'parent.name') === 'li';
     let result = nestedList ? '\n' : '';
@@ -173,7 +173,7 @@ function formatOrderedList(elem, fn, options) {
     }
     return result + '\n';
 }
-exports.formatOrderedList = formatOrderedList;
+exports.orderedList = formatOrderedList;
 function tableToString(table) {
     // Determine space width per column
     // Convert all rows to lengths
@@ -249,9 +249,9 @@ function formatTable(elem, fn, options) {
         }
     }
 }
-exports.formatTable = formatTable;
+exports.table = formatTable;
 function formatBlockquote(elem, fn, options) {
     return '> ' + fn(elem.children, options) + '\n';
 }
-exports.formatBlockquote = formatBlockquote;
+exports.blockquote = formatBlockquote;
 //# sourceMappingURL=formatter.js.map

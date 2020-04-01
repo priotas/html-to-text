@@ -9,7 +9,7 @@
     "prepublish": "npm test && npm build",
     "prettier:check": "prettier --ignore-path .eslintignore --check '**/*.{js,jsx,ts,tsx,md,json}'",
     "lint": "yarn prettier:check && eslint --ext .js,.jsx,.ts,.tsx .",
-    "lint:fix": "eslint --ext .js,.jsx,.ts,.tsx. --fix; prettier --ignore-path .eslintignore --write '**/*.{js,jsx,ts,tsx,md,json}'"
+    "lint:fix": "eslint.js --ext .js,.jsx,.ts,.tsx . --fix; prettier --ignore-path .eslintignore --write '**/*.{js,jsx,ts,tsx,md,json}'"
   },
   "author": {
     "name": "Malte Legenhausen",

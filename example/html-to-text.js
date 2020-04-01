@@ -16,7 +16,9 @@ htmlToText.fromFile(
     tables: ['#invoice', '.address']
   },
   function (err, text) {
-    if (err) return console.error(err);
+    if (err) {
+      return console.error(err);
+    }
     console.log(text);
   }
 );

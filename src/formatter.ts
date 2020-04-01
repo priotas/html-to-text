@@ -1,6 +1,6 @@
 //import {} from 'domhandler';
 import { decode } from 'he';
-import { compact, get, max, padEnd,times, trimStart } from 'lodash';
+import { compact, get, max, padEnd, times, trimStart } from 'lodash';
 
 import helper from './helper';
 
@@ -278,16 +278,16 @@ function formatBlockquote(elem: any, fn: Function, options: any) {
 }
 
 export {
-  formatAnchor,
-  formatBlockquote,
-  formatHeading,
-  formatHorizontalLine,
-  formatImage,
-  formatLineBreak,
-  formatListItem,
-  formatOrderedList,
-  formatParagraph,
-  formatTable,
-  formatText,
-  formatUnorderedList
+  formatAnchor as anchor,
+  formatBlockquote as blockquote,
+  formatHeading as heading,
+  formatHorizontalLine as horizontalLine,
+  formatImage as image,
+  formatLineBreak as lineBreak,
+  formatListItem as listItem,
+  formatOrderedList as orderedList,
+  formatParagraph as paragraph,
+  formatTable as table,
+  formatText as text,
+  formatUnorderedList as unorderedList
 };

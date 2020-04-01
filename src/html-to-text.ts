@@ -1,9 +1,8 @@
+import { DefaultHandler, Parser } from 'htmlparser2';
 import { includes, trimEnd } from 'lodash';
 
-import { Parser, DefaultHandler } from 'htmlparser2';
-
-import helper from './helper';
 import * as defaultFormat from './formatter';
+import helper from './helper';
 
 // Which type of tags should not be parsed
 const SKIP_TYPES = ['style', 'script'];
@@ -60,9 +59,13 @@ function filterBody(dom: any, options: any, baseElement: any) {
   const splitTag = helper.splitCssSearchTag(baseElement);
 
   function walk(dom: any) {
-    if (result) return;
+    if (result) {
+      return;
+    }
     dom.forEach(function (elem: any) {
-      if (result) return;
+      if (result) {
+        return;
+      }
       if (elem.name === splitTag.element) {
         const documentClasses =
           elem.attribs && elem.attribs.class
@@ -83,7 +86,9 @@ function filterBody(dom: any, options: any, baseElement: any) {
           return;
         }
       }
-      if (elem.children) walk(elem.children);
+      if (elem.children) {
+        walk(elem.children);
+      }
     });
   }
   walk(dom);
@@ -91,7 +96,9 @@ function filterBody(dom: any, options: any, baseElement: any) {
 }
 
 function containsTable(attr: any, tables: any) {
-  if (tables === true) return true;
+  if (tables === true) {
+    return true;
+  }
 
   function removePrefix(key: string) {
     return key.substr(1);
@@ -196,7 +203,7 @@ function walk(dom: any, options: any, result?: string) {
   return result;
 }
 
-function fromString(str: string, options: any) {
+function fromString(str: string, options?: any) {
   return htmlToText(str, options || {});
 }
 

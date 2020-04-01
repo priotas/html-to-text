@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = require("lodash");
 const htmlparser2_1 = require("htmlparser2");
-const helper_1 = require("./helper");
+const lodash_1 = require("lodash");
 const defaultFormat = require("./formatter");
+const helper_1 = require("./helper");
 // Which type of tags should not be parsed
 const SKIP_TYPES = ['style', 'script'];
 function htmlToText(html, options) {
@@ -47,11 +47,13 @@ function filterBody(dom, options, baseElement) {
     let result = null;
     const splitTag = helper_1.default.splitCssSearchTag(baseElement);
     function walk(dom) {
-        if (result)
+        if (result) {
             return;
+        }
         dom.forEach(function (elem) {
-            if (result)
+            if (result) {
                 return;
+            }
             if (elem.name === splitTag.element) {
                 const documentClasses = elem.attribs && elem.attribs.class
                     ? elem.attribs.class.split(' ')
@@ -67,16 +69,18 @@ function filterBody(dom, options, baseElement) {
                     return;
                 }
             }
-            if (elem.children)
+            if (elem.children) {
                 walk(elem.children);
+            }
         });
     }
     walk(dom);
     return options.returnDomByDefault ? result || dom : result;
 }
 function containsTable(attr, tables) {
-    if (tables === true)
+    if (tables === true) {
         return true;
+    }
     function removePrefix(key) {
         return key.substr(1);
     }

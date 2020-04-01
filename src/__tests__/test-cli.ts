@@ -1,26 +1,26 @@
-var expect = require('chai').expect;
-var fs = require('fs');
+import * as fs from 'fs';
+import * as path from 'path';
 
-var exec = require('child_process').exec;
+const exec = require('child_process').exec;
 
-function runWithInputAndExpect(input, args, expectedOutput, done) {
+function runWithInputAndExpect(input: any, args: any, expectedOutput: any, done: any) {
   exec(
-    'echo "' + input.replace(/"/g, '\\"') + '" | node bin/cli.js ' + args,
-    function callback(error, stdout, stderr) {
-      expect(error).to.be.a('null');
-      expect(stderr).to.equal('');
-      expect(stdout).to.equal(expectedOutput + '\n');
+    'echo "' + input.replace(/"/g, '\\"') + '" | ts-node src/cli.ts ' + args,
+    function callback(error: any, stdout: any, stderr: any) {
+      expect(error).toBeNull();
+      expect(stderr).toEqual('');
+      expect(stdout).toEqual(expectedOutput + '\n');
       done(error);
     }
   );
 }
 
-describe('cli arguments', function () {
-  it('should output nothing with empty input', function (done) {
+describe('cli arguments', () => {
+  it('should output nothing with empty input', (done) => {
     runWithInputAndExpect('', '', '', done);
   });
 
-  it('should not ignore images by default', function (done) {
+  it('should not ignore images by default', (done) => {
     runWithInputAndExpect(
       'Hello <img alt="alt text" src="http://my.img/here.jpg">!',
       '',
@@ -29,7 +29,7 @@ describe('cli arguments', function () {
     );
   });
 
-  it('should ignore images with --ignore-image=true', function (done) {
+  it('should ignore images with --ignore-image=true', (done) => {
     runWithInputAndExpect(
       'Hello <img alt="alt text" src="http://my.img/here.jpg">!',
       '--ignore-image=true',
@@ -38,7 +38,7 @@ describe('cli arguments', function () {
     );
   });
 
-  it('should not ignore href by default', function (done) {
+  it('should not ignore href by default', (done) => {
     runWithInputAndExpect(
       '<a href="http://my.link">test</a>',
       '',
@@ -47,7 +47,7 @@ describe('cli arguments', function () {
     );
   });
 
-  it('should ignore href with --ignore-href=true', function (done) {
+  it('should ignore href with --ignore-href=true', (done) => {
     runWithInputAndExpect(
       '<a href="http://my.link">test</a>',
       '--ignore-href=true',
@@ -56,7 +56,7 @@ describe('cli arguments', function () {
     );
   });
 
-  it('should wordwrap at 80 characters by default', function (done) {
+  it('should wordwrap at 80 characters by default', (done) => {
     runWithInputAndExpect(
       ' 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789',
       '',
@@ -93,20 +93,20 @@ describe('cli arguments', function () {
   });
 
   it('should support --tables definitions with commas', function (done) {
-    var expectedTxt = fs.readFileSync('test/test.txt', 'utf8');
+    const expectedTxt = fs.readFileSync(path.join(__dirname, 'test.txt'), 'utf8');
 
-    function runWithArgs(args, callback) {
-      exec('cat test/test.html | node bin/cli.js ' + args, callback);
+    function runWithArgs(args: any, callback: any) {
+      exec(`cat ${path.join(__dirname, 'test.html')} | ts-node src/cli.ts ` + args, callback);
     }
 
     runWithArgs('--tables=#invoice,.address', function callback(
-      error,
-      stdout,
-      stderr
+      error: any,
+      stdout: any,
+      stderr: any
     ) {
-      expect(error).to.be.a('null');
-      expect(stderr).to.equal('');
-      expect(stdout).to.equal(expectedTxt + '\n');
+      expect(error).toBeNull();
+      expect(stderr).toEqual('');
+      expect(stdout).toEqual(expectedTxt + '\n');
       done(error);
     });
   });

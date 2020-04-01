@@ -34,21 +34,20 @@ module.exports = {
     'jest/no-focused-tests': 2,
     'jest/no-identical-title': 2,
     camelcase: 0,
-    'prefer-arrow-callback': [
-      'error',
-      {
-        allowNamedFunctions: true
-      }
-    ],
+    // 'prefer-arrow-callback': [
+    //   'error',
+    //   {
+    //     allowNamedFunctions: true
+    //   }
+    // ],
     'class-methods-use-this': 0,
     'no-restricted-syntax': 0,
-    'no-param-reassign': [
-      'error',
-      {
-        props: false
-      }
-    ],
-
+    // 'no-param-reassign': [
+    //   'error',
+    //   {
+    //     props: false
+    //   }
+    // ],
     'arrow-body-style': 0,
     'no-nested-ternary': 0,
 
@@ -61,6 +60,7 @@ module.exports = {
     'import/order': 'off',
 
     'import/no-deprecated': 'warn',
-    'import/no-duplicates': 'error'
+    'import/no-duplicates': 'error',
+    'no-case-declarations': 0
   }
 };

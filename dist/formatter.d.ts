@@ -10,4 +10,4 @@ declare function formatUnorderedList(elem: any, fn: Function, options: any): str
 declare function formatOrderedList(elem: any, fn: Function, options: any): string;
 declare function formatTable(elem: any, fn: Function, options: any): string;
 declare function formatBlockquote(elem: any, fn: Function, options: any): string;
-export { formatAnchor, formatBlockquote, formatHeading, formatHorizontalLine, formatImage, formatLineBreak, formatListItem, formatOrderedList, formatParagraph, formatTable, formatText, formatUnorderedList };
+export { formatAnchor as anchor, formatBlockquote as blockquote, formatHeading as heading, formatHorizontalLine as horizontalLine, formatImage as image, formatLineBreak as lineBreak, formatListItem as listItem, formatOrderedList as orderedList, formatParagraph as paragraph, formatTable as table, formatText as text, formatUnorderedList as unorderedList };
