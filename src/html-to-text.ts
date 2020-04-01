@@ -7,8 +7,8 @@ import helper from './helper';
 // Which type of tags should not be parsed
 const SKIP_TYPES = ['style', 'script'];
 
-function htmlToText(html: string, options: any) {
-  options = Object.assign(
+function htmlToText(html: string, _options?: any) {
+  const finalOptions = Object.assign(
     {
       wordwrap: 80,
       tables: [],
@@ -32,22 +32,22 @@ function htmlToText(html: string, options: any) {
       },
       unorderedListItemPrefix: ' * '
     },
-    options || {}
+    _options || {}
   );
 
   const handler = new DefaultHandler();
   new Parser(handler).parseComplete(html);
 
-  options.lineCharCount = 0;
+  finalOptions.lineCharCount = 0;
 
   let result: string = '';
-  let baseElements = Array.isArray(options.baseElement)
-    ? options.baseElement
-    : [options.baseElement];
+  let baseElements = Array.isArray(finalOptions.baseElement)
+    ? finalOptions.baseElement
+    : [finalOptions.baseElement];
   for (let idx = 0; idx < baseElements.length; ++idx) {
     result += walk(
-      filterBody(handler.dom, options, baseElements[idx]),
-      options
+      filterBody(handler.dom, finalOptions, baseElements[idx]),
+      finalOptions
     );
   }
   return trimEnd(result);
@@ -203,8 +203,4 @@ function walk(dom: any, options: any, result?: string) {
   return result;
 }
 
-function fromString(str: string, options?: any) {
-  return htmlToText(str, options || {});
-}
-
-export { htmlToText, fromString };
+export { htmlToText };

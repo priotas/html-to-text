@@ -3,10 +3,10 @@
 import *  as fs from 'fs';
 import * as path from 'path';
 
-import { fromString } from '../html-to-text';
+import { htmlToText } from '../html-to-text';
 
 describe('html-to-text', () => {
-  describe('.fromString()', () => {
+  describe('.htmlToText()', () => {
     describe('wordwrap option', () => {
       let longStr: string;
 
@@ -16,37 +16,37 @@ describe('html-to-text', () => {
       });
 
       it('should wordwrap at 80 characters by default', () => {
-        expect(fromString(longStr)).toEqual(
+        expect(htmlToText(longStr)).toEqual(
           '111111111 222222222 333333333 444444444 555555555 666666666 777777777 888888888\n999999999'
         );
       });
 
       it('should wordwrap at given amount of characters when give a number', () => {
-        expect(fromString(longStr, { wordwrap: 20 })).toEqual(
+        expect(htmlToText(longStr, { wordwrap: 20 })).toEqual(
           '111111111 222222222\n333333333 444444444\n555555555 666666666\n777777777 888888888\n999999999'
         );
 
-        expect(fromString(longStr, { wordwrap: 50 })).toEqual(
+        expect(htmlToText(longStr, { wordwrap: 50 })).toEqual(
           '111111111 222222222 333333333 444444444 555555555\n666666666 777777777 888888888 999999999'
         );
 
-        expect(fromString(longStr, { wordwrap: 70 })).toEqual(
+        expect(htmlToText(longStr, { wordwrap: 70 })).toEqual(
           '111111111 222222222 333333333 444444444 555555555 666666666 777777777\n888888888 999999999'
         );
       });
 
       it('should not wordwrap when given null', () => {
-        expect(fromString(longStr, { wordwrap: null })).toEqual(longStr);
+        expect(htmlToText(longStr, { wordwrap: null })).toEqual(longStr);
       });
 
       it('should not wordwrap when given false', () => {
-        expect(fromString(longStr, { wordwrap: false })).toEqual(longStr);
+        expect(htmlToText(longStr, { wordwrap: false })).toEqual(longStr);
       });
 
       it('should not exceed the line width when processing embedded format tags', () => {
         const testString =
           "<p><strong>This text isn't counted</strong> when calculating where to break a string for 80 character line lengths.</p>";
-        expect(fromString(testString, {})).toEqual(
+        expect(htmlToText(testString, {})).toEqual(
           "This text isn't counted when calculating where to break a string for 80\ncharacter line lengths."
         );
       });
@@ -54,7 +54,7 @@ describe('html-to-text', () => {
       it('should work with a long string containing line feeds', () => {
         const testString =
           '<p>If a word with a line feed exists over the line feed boundary then\nyou\nmust\nrespect it.</p>';
-        expect(fromString(testString, {})).toEqual(
+        expect(htmlToText(testString, {})).toEqual(
           'If a word with a line feed exists over the line feed boundary then you must\nrespect it.'
         );
       });
@@ -62,7 +62,7 @@ describe('html-to-text', () => {
       it('should not wrongly truncate lines when processing embedded format tags', () => {
         const testString =
           "<p><strong>This text isn't counted</strong> when calculating where to break a string for 80 character line lengths.  However it can affect where the next line breaks and this could lead to having an early line break</p>";
-        expect(fromString(testString, {})).toEqual(
+        expect(htmlToText(testString, {})).toEqual(
           "This text isn't counted when calculating where to break a string for 80\ncharacter line lengths. However it can affect where the next line breaks and\nthis could lead to having an early line break"
         );
       });
@@ -70,7 +70,7 @@ describe('html-to-text', () => {
       it('should not exceed the line width when processing anchor tags', () => {
         const testString =
           '<p>We appreciate your business. And we hope you\'ll check out our <a href="http://example.com/">new products</a>!</p>';
-        expect(fromString(testString, {})).toEqual(
+        expect(htmlToText(testString, {})).toEqual(
           "We appreciate your business. And we hope you'll check out our new products\n[http://example.com/]!"
         );
       });
@@ -78,7 +78,7 @@ describe('html-to-text', () => {
       it('should honour line feeds from a long word across the wrap, where the line feed is before the wrap', () => {
         const testString =
           '<p>This string is meant to test if a string is split properly across a\nnewlineandlongword with following text.</p>';
-        expect(fromString(testString, {})).toEqual(
+        expect(htmlToText(testString, {})).toEqual(
           'This string is meant to test if a string is split properly across a\nnewlineandlongword with following text.'
         );
       });
@@ -86,7 +86,7 @@ describe('html-to-text', () => {
       it('should remove line feeds from a long word across the wrap, where the line feed is after the wrap', () => {
         const testString =
           '<p>This string is meant to test if a string is split properly across anewlineandlong\nword with following text.</p>';
-        expect(fromString(testString, {})).toEqual(
+        expect(htmlToText(testString, {})).toEqual(
           'This string is meant to test if a string is split properly across\nanewlineandlong word with following text.'
         );
       });
@@ -100,17 +100,17 @@ describe('html-to-text', () => {
       });
 
       it('should not preserve newlines by default', () => {
-        expect(fromString(newlineStr)).not.toContain('\n');
+        expect(htmlToText(newlineStr)).not.toContain('\n');
       });
 
       it('should preserve newlines when provided with a truthy value', () => {
-        expect(fromString(newlineStr, { preserveNewlines: true })).toContain(
+        expect(htmlToText(newlineStr, { preserveNewlines: true })).toContain(
           '\n'
         );
       });
 
       it('should not preserve newlines in the tags themselves', () => {
-        var output_text = fromString(newlineStr, {
+        var output_text = htmlToText(newlineStr, {
           preserveNewlines: true
         });
         expect(output_text.slice(0, 1)).toEqual('O');
@@ -119,7 +119,7 @@ describe('html-to-text', () => {
       it('should preserve line feeds in a long wrapping string containing line feeds', () => {
         const testString =
           '<p>If a word with a line feed exists over the line feed boundary then\nyou\nmust\nrespect it.</p>';
-        expect(fromString(testString, { preserveNewlines: true })).toEqual(
+        expect(htmlToText(testString, { preserveNewlines: true })).toEqual(
           'If a word with a line feed exists over the line feed boundary then\nyou\nmust\nrespect it.'
         );
       });
@@ -127,7 +127,7 @@ describe('html-to-text', () => {
       it('should preserve line feeds in a long string containing line feeds across the wrap', () => {
         const testString =
           '<p>If a word with a line feed exists over the line feed boundary then\nyou must respect it.</p>';
-        expect(fromString(testString, { preserveNewlines: true })).toEqual(
+        expect(htmlToText(testString, { preserveNewlines: true })).toEqual(
           'If a word with a line feed exists over the line feed boundary then\nyou must respect it.'
         );
       });
@@ -135,7 +135,7 @@ describe('html-to-text', () => {
       it('should preserve line feeds in a long string containing line feeds across the wrap with a line feed before 80 chars', () => {
         const testString =
           '<p>This string is meant to test if a string is split properly across a\nnewlineandlongword with following text.</p>';
-        expect(fromString(testString, { preserveNewlines: true })).toEqual(
+        expect(htmlToText(testString, { preserveNewlines: true })).toEqual(
           'This string is meant to test if a string is split properly across a\nnewlineandlongword with following text.'
         );
       });
@@ -143,7 +143,7 @@ describe('html-to-text', () => {
       it('should preserve line feeds in a long string containing line feeds across the wrap with a line feed after 80 chars', () => {
         const testString =
           '<p>This string is meant to test if a string is split properly across anewlineandlong\nword with following text.</p>';
-        expect(fromString(testString, { preserveNewlines: true })).toEqual(
+        expect(htmlToText(testString, { preserveNewlines: true })).toEqual(
           'This string is meant to test if a string is split properly across\nanewlineandlong\nword with following text.'
         );
       });
@@ -151,7 +151,7 @@ describe('html-to-text', () => {
       it('should split long lines', () => {
         const testString =
           '<p>If a word with a line feed exists over the line feed boundary then you must respect it.</p>';
-        expect(fromString(testString, { preserveNewlines: true })).toEqual(
+        expect(htmlToText(testString, { preserveNewlines: true })).toEqual(
           'If a word with a line feed exists over the line feed boundary then you must\nrespect it.'
         );
       });
@@ -166,7 +166,7 @@ describe('html-to-text', () => {
 
       it('should not use single new line when given null', () => {
         expect(
-          fromString(paragraphsString, {
+          htmlToText(paragraphsString, {
             singleNewLineParagraphs: null
           })
         ).toEqual('First\n\nSecond');
@@ -174,7 +174,7 @@ describe('html-to-text', () => {
 
       it('should not use single new line when given false', () => {
         expect(
-          fromString(paragraphsString, {
+          htmlToText(paragraphsString, {
             singleNewLineParagraphs: false
           })
         ).toEqual('First\n\nSecond');
@@ -182,7 +182,7 @@ describe('html-to-text', () => {
 
       it('should use single new line when given true', () => {
         expect(
-          fromString(paragraphsString, {
+          htmlToText(paragraphsString, {
             singleNewLineParagraphs: true
           })
         ).toEqual('First\nSecond');
@@ -205,7 +205,7 @@ describe('html-to-text', () => {
         </TABLE> \
       ';
       var resultExpected = 'Good morning Jacob, Lorem ipsum dolor sit amet.';
-      const result = fromString(html, { tables: true });
+      const result = htmlToText(html, { tables: true });
       expect(result).toEqual(resultExpected);
     });
 
@@ -223,45 +223,45 @@ describe('html-to-text', () => {
         </TABLE> \
       ';
       var resultExpected = 'Good morning Jacob, Lorem ipsum dolor sit amet.';
-      const result = fromString(html, { tables: true });
+      const result = htmlToText(html, { tables: true });
       expect(result).toEqual(resultExpected);
     });
   });
 
   describe('a', () => {
     it('should decode html attribute entities from href', () => {
-      const result = fromString('<a href="/foo?a&#x3D;b">test</a>');
+      const result = htmlToText('<a href="/foo?a&#x3D;b">test</a>');
       expect(result).toEqual('test [/foo?a=b]');
     });
 
     it('should strip mailto: from email links', () => {
-      const result = fromString(
+      const result = htmlToText(
         '<a href="mailto:foo@example.com">email me</a>'
       );
       expect(result).toEqual('email me [foo@example.com]');
     });
 
     it('should return link with brackets', () => {
-      const result = fromString('<a href="http://my.link">test</a>');
+      const result = htmlToText('<a href="http://my.link">test</a>');
       expect(result).toEqual('test [http://my.link]');
     });
 
     it('should return link without brackets', () => {
-      const result = fromString('<a href="http://my.link">test</a>', {
+      const result = htmlToText('<a href="http://my.link">test</a>', {
         noLinkBrackets: true
       });
       expect(result).toEqual('test http://my.link');
     });
 
     it('should not return link for anchor if noAnchorUrl is set to true', () => {
-      const result = fromString('<a href="#link">test</a>', {
+      const result = htmlToText('<a href="#link">test</a>', {
         noAnchorUrl: true
       });
       expect(result).toEqual('test');
     });
 
     it('should return link for anchor if noAnchorUrl is set to false', () => {
-      const result = fromString('<a href="#link">test</a>', {
+      const result = htmlToText('<a href="#link">test</a>', {
         noAnchorUrl: false
       });
       expect(result).toEqual('test [#link]');
@@ -272,24 +272,24 @@ describe('html-to-text', () => {
     describe('ul', () => {
       it('should handle empty unordered lists', () => {
         const testString = '<ul></ul>';
-        expect(fromString(testString)).toEqual('');
+        expect(htmlToText(testString)).toEqual('');
       });
 
       it('should handle an unordered list with multiple elements', () => {
         const testString = '<ul><li>foo</li><li>bar</li></ul>';
-        expect(fromString(testString)).toEqual(' * foo\n * bar');
+        expect(htmlToText(testString)).toEqual(' * foo\n * bar');
       });
 
       it('should handle an unordered list prefix option', () => {
         const testString = '<ul><li>foo</li><li>bar</li></ul>';
         const options = { unorderedListItemPrefix: ' test ' };
-        expect(fromString(testString, options)).toEqual(' test foo\n test bar');
+        expect(htmlToText(testString, options)).toEqual(' test foo\n test bar');
       });
 
       it('should handle nested ul correctly', () => {
         const testString =
           '<ul><li>foo<ul><li>bar<ul><li>baz.1</li><li>baz.2</li></ul></li></ul></li></ul>';
-        expect(fromString(testString)).toEqual(
+        expect(htmlToText(testString)).toEqual(
           ' * foo\n    * bar\n       * baz.1\n       * baz.2'
         );
       });
@@ -298,57 +298,57 @@ describe('html-to-text', () => {
     describe('ol', () => {
       it('should handle empty ordered lists', () => {
         const testString = '<ol></ol>';
-        expect(fromString(testString)).toEqual('');
+        expect(htmlToText(testString)).toEqual('');
       });
 
       it('should handle an ordered list with multiple elements', () => {
         const testString = '<ol><li>foo</li><li>bar</li></ol>';
-        expect(fromString(testString)).toEqual(' 1. foo\n 2. bar');
+        expect(htmlToText(testString)).toEqual(' 1. foo\n 2. bar');
       });
 
       it('should support the ordered list type="1" attribute', () => {
         const testString = '<ol type="1"><li>foo</li><li>bar</li></ol>';
-        expect(fromString(testString)).toEqual(' 1. foo\n 2. bar');
+        expect(htmlToText(testString)).toEqual(' 1. foo\n 2. bar');
       });
 
       it('should fallback to type="!" behavior if type attribute is invalid', () => {
         const testString = '<ol type="1"><li>foo</li><li>bar</li></ol>';
-        expect(fromString(testString)).toEqual(' 1. foo\n 2. bar');
+        expect(htmlToText(testString)).toEqual(' 1. foo\n 2. bar');
       });
 
       it('should support the ordered list type="a" attribute', () => {
         const testString = '<ol type="a"><li>foo</li><li>bar</li></ol>';
-        expect(fromString(testString)).toEqual(' a. foo\n b. bar');
+        expect(htmlToText(testString)).toEqual(' a. foo\n b. bar');
       });
 
       it('should support the ordered list type="A" attribute', () => {
         const testString = '<ol type="A"><li>foo</li><li>bar</li></ol>';
-        expect(fromString(testString)).toEqual(' A. foo\n B. bar');
+        expect(htmlToText(testString)).toEqual(' A. foo\n B. bar');
       });
 
       it('should support the ordered list type="i" attribute by falling back to type="1"', () => {
         const testString = '<ol type="i"><li>foo</li><li>bar</li></ol>';
         // TODO Implement lowercase roman numerals
-        // expect(fromString(testString)).toEqual('i. foo\nii. bar');
-        expect(fromString(testString)).toEqual(' 1. foo\n 2. bar');
+        // expect(htmlToText(testString)).toEqual('i. foo\nii. bar');
+        expect(htmlToText(testString)).toEqual(' 1. foo\n 2. bar');
       });
 
       it('should support the ordered list type="I" attribute by falling back to type="1"', () => {
         const testString = '<ol type="I"><li>foo</li><li>bar</li></ol>';
         // TODO Implement uppercase roman numerals
-        // expect(fromString(testString)).toEqual('I. foo\nII. bar');
-        expect(fromString(testString)).toEqual(' 1. foo\n 2. bar');
+        // expect(htmlToText(testString)).toEqual('I. foo\nII. bar');
+        expect(htmlToText(testString)).toEqual(' 1. foo\n 2. bar');
       });
 
       it('should support the ordered list start attribute', () => {
         const testString = '<ol start="2"><li>foo</li><li>bar</li></ol>';
-        expect(fromString(testString)).toEqual(' 2. foo\n 3. bar');
+        expect(htmlToText(testString)).toEqual(' 2. foo\n 3. bar');
       });
 
       it('should handle nested ol correctly', () => {
         const testString =
           '<ol><li>foo<ol><li>bar<ol><li>baz</li><li>baz</li></ol></li></ol></li></ol>';
-        expect(fromString(testString)).toEqual(
+        expect(htmlToText(testString)).toEqual(
           ' 1. foo\n    1. bar\n       1. baz\n       2. baz'
         );
       });
@@ -359,12 +359,12 @@ describe('html-to-text', () => {
        *
       it('should support the ordered list type="a" attribute past 26 characters', function() {
         const testString = '<ol start="26" type="a"><li>foo</li><li>bar</li></ol>';
-        expect(fromString(testString)).toEqual('z. foo\naa. bar');
+        expect(htmlToText(testString)).toEqual('z. foo\naa. bar');
       });
 
       it('should support the ordered list type="A" attribute past 26 characters', function() {
         const testString = '<ol start="26" type="A"><li>foo</li><li>bar</li></ol>';
-        expect(fromString(testString)).toEqual('Z. foo\nAA. bar');
+        expect(htmlToText(testString)).toEqual('Z. foo\nAA. bar');
       });
       */
     });
@@ -380,7 +380,7 @@ describe('html-to-text', () => {
       ';
       const resultExpected =
         'Good morning Jacob, Lorem ipsum dolor sit amet\n\nLorem ipsum dolor sit amet.\n\n * run in the park (in progress)';
-      const result = fromString(html, { wordwrap: false });
+      const result = htmlToText(html, { wordwrap: false });
       expect(result).toEqual(resultExpected);
     });
   });
@@ -389,21 +389,21 @@ describe('html-to-text', () => {
     it('does not insert null bytes', () => {
       const html = '<a href="some-url?a=b&amp;b=c">Testing &amp; Done</a>';
 
-      const result = fromString(html);
+      const result = htmlToText(html);
       expect(result).toEqual('Testing & Done [some-url?a=b&b=c]');
     });
 
     it('should replace entities inside `alt` attributes of images', () => {
       const html = '<img src="test.png" alt="&quot;Awesome&quot;">';
 
-      const result = fromString(html);
+      const result = htmlToText(html);
       expect(result).toEqual('"Awesome" [test.png]');
     });
   });
 
   describe('unicode support', () => {
     it('should decode &#128514; to 😂', () => {
-      const result = fromString('&#128514;');
+      const result = htmlToText('&#128514;');
       expect(result).toEqual('😂');
     });
   });
@@ -411,7 +411,7 @@ describe('html-to-text', () => {
   describe('disable uppercaseHeadings', () => {
     [1, 2, 3, 4, 5, 6].forEach((i) => {
       it('should return h' + i + ' in lowercase', () => {
-        const result = fromString('<h' + i + '>test</h' + i + '>', {
+        const result = htmlToText('<h' + i + '>test</h' + i + '>', {
           uppercaseHeadings: false
         });
         expect(result).toEqual('test');
@@ -421,7 +421,7 @@ describe('html-to-text', () => {
 
   describe('custom formatting', () => {
     it('should allow to pass custom formatting functions', () => {
-      const result = fromString('<h1>TeSt</h1>', {
+      const result = htmlToText('<h1>TeSt</h1>', {
         format: {
           heading: function (elem: any, fn: Function, options: any) {
             var h = fn(elem.children, options);
@@ -444,7 +444,7 @@ describe('html-to-text', () => {
       const options = {
         tables: ['#invoice', '.address']
       };
-      const text = fromString(htmlFile, options);
+      const text = htmlToText(htmlFile, options);
       expect(text).toEqual(txtFile);
     });
 
@@ -462,7 +462,7 @@ describe('html-to-text', () => {
         tables: ['.address'],
         baseElement: 'table.address'
       };
-      const text = fromString(htmlFile, options);
+      const text = htmlToText(htmlFile, options);
       expect(text).toEqual(txtFile);
     });
 
@@ -480,7 +480,7 @@ describe('html-to-text', () => {
         tables: ['.address'],
         baseElement: ['table.address', 'table.address']
       };
-      const text = fromString(htmlFile, options);
+      const text = htmlToText(htmlFile, options);
       expect(text).toEqual(txtFile);
     });
 
@@ -498,7 +498,7 @@ describe('html-to-text', () => {
         tables: ['.address'],
         baseElement: ['table.address', 'p.normal-space', 'table.address']
       };
-      const text = fromString(htmlFile, options);
+      const text = htmlToText(htmlFile, options);
       expect(text).toEqual(txtFile);
     });
 
@@ -516,7 +516,7 @@ describe('html-to-text', () => {
         tables: ['.address'],
         baseElement: 'p.normal-space'
       };
-      const text = fromString(htmlFile, options);
+      const text = htmlToText(htmlFile, options);
       expect(text).toEqual(txtFile);
     });
 
@@ -531,7 +531,7 @@ describe('html-to-text', () => {
         tables: ['#invoice', '.address'],
         baseElement: 'table.notthere'
       };
-      const text = fromString(htmlFile, options);
+      const text = htmlToText(htmlFile, options);
       expect(text).toEqual(txtFile);
     });
 
@@ -547,7 +547,7 @@ describe('html-to-text', () => {
         baseElement: 'table.notthere',
         returnDomByDefault: false
       };
-      const text = fromString(htmlFile, options);
+      const text = htmlToText(htmlFile, options);
       expect(text).toEqual(expectedTxt);
     });
   });
@@ -557,7 +557,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlong\nword_with_following_text.</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: { wrapCharacters: ['/'], forceWrapOnLimit: true }
         })
       ).toEqual(
@@ -568,7 +568,7 @@ describe('html-to-text', () => {
     it('should not wrap a string if longWordSplit is not set', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlongword_with_following_text.</p>';
-      expect(fromString(testString, {})).toEqual(
+      expect(htmlToText(testString, {})).toEqual(
         '_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlongword_with_following_text.'
       );
     });
@@ -577,7 +577,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlong\nword_with_following_text.</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: { wrapCharacters: ['/'], forceWrapOnLimit: false }
         })
       ).toEqual(
@@ -589,7 +589,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlong\nword_with_following_text.</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: { wrapCharacters: [], forceWrapOnLimit: false }
         })
       ).toEqual(
@@ -601,7 +601,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlong\nword_with_following_text.</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: { wrapCharacters: ['/', '_'], forceWrapOnLimit: false }
         })
       ).toEqual(
@@ -613,7 +613,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlong\nword_with_following_text.</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: {
             wrapCharacters: ['/', '-', '_'],
             forceWrapOnLimit: false
@@ -628,7 +628,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlong\nword_with_following_text.</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: { wrapCharacters: ['_', '/'], forceWrapOnLimit: false }
         })
       ).toEqual(
@@ -640,7 +640,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split-properly_across_anewlineandlong\nword_with_following_text.</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: {
             wrapCharacters: ['-', '_', '/'],
             forceWrapOnLimit: false
@@ -655,7 +655,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>https://github.com/werk85/node-html-to-text/blob/master/lib/html-to-text.js</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: { wrapCharacters: ['/', '-'], forceWrapOnLimit: false }
         })
       ).toEqual(
@@ -667,7 +667,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>https://github.com/AndrewFinlay/node-html-to-text/commit/64836a5bd97294a672b24c26cb8a3ccdace41001</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: { wrapCharacters: ['/', '-'], forceWrapOnLimit: false }
         })
       ).toEqual(
@@ -679,7 +679,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>https://github.com/werk85/node-html-to-text/blob/master/lib/werk85/node-html-to-text/blob/master/lib/werk85/node-html-to-text/blob/master/lib/werk85/node-html-to-text/blob/master/lib/werk85/node-html-to-text/blob/master/lib/html-to-text.js</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: { wrapCharacters: ['/', '-'], forceWrapOnLimit: false }
         })
       ).toEqual(
@@ -691,7 +691,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>https://github.com/werk85/node-html-to-text/blob/master/lib/werk85/node-html-to-text/blob/master/lib/werk85/node-html-to-text/blob/master/lib/werk85/node-html-to-text/blob/master/lib/werk85/node-html-to-text/blob/master/lib/html-to-text.js</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           longWordSplit: { wrapCharacters: [], forceWrapOnLimit: true }
         })
       ).toEqual(
@@ -703,7 +703,7 @@ describe('html-to-text', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlong\nword_with_following_text.</p>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           preserveNewlines: true,
           longWordSplit: { wrapCharacters: ['/', '_'], forceWrapOnLimit: false }
         })
@@ -715,7 +715,7 @@ describe('html-to-text', () => {
     it('should not put in extra linefeeds if the end of the untouched long string coincides with a preserved line feed', () => {
       const testString =
         '<p>_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlong\nword_with_following_text.</p>';
-      expect(fromString(testString, { preserveNewlines: true })).toEqual(
+      expect(htmlToText(testString, { preserveNewlines: true })).toEqual(
         '_This_string_is_meant_to_test_if_a_string_is_split_properly_across_anewlineandlong\nword_with_following_text.'
       );
     });
@@ -724,7 +724,7 @@ describe('html-to-text', () => {
       const testString =
         '<a href="http://images.fb.com/2015/12/21/ivete-sangalo-launches-360-music-video-on-facebook/">http://images.fb.com/2015/12/21/ivete-sangalo-launches-360-music-video-on-facebook/</a>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           hideLinkHrefIfSameAsText: true,
           longWordSplit: { wrapCharacters: ['/', '_'], forceWrapOnLimit: false }
         })
@@ -737,7 +737,7 @@ describe('html-to-text', () => {
       const testString =
         '<a href="http://images.fb.com/2015/12/21/ivete-sangalo-launches-360-music-video-on-facebook/">http://images.fb.com/2015/12/21/ivete-sangalo-launches-360-music-video-on-facebook/</a>';
       expect(
-        fromString(testString, {
+        htmlToText(testString, {
           hideLinkHrefIfSameAsText: false,
           longWordSplit: { wrapCharacters: ['/', '_'], forceWrapOnLimit: false }
         })
@@ -750,7 +750,7 @@ describe('html-to-text', () => {
   describe('whitespace', () => {
     it('should not be ignored inside a whitespace-only node', () => {
       const testString = 'foo<span> </span>bar';
-      expect(fromString(testString)).toEqual('foo bar');
+      expect(htmlToText(testString)).toEqual('foo bar');
     });
 
     it('should not add additional whitespace after <sup>', () => {
@@ -758,7 +758,7 @@ describe('html-to-text', () => {
         '<p>This text contains <sup>superscript</sup> text.</p>';
       const options = { preserveNewlines: true };
 
-      expect(fromString(testString, options)).toEqual(
+      expect(htmlToText(testString, options)).toEqual(
         'This text contains superscript text.'
       );
     });
@@ -776,7 +776,7 @@ describe('html-to-text', () => {
         testString += '<wbr>n';
       }
       testString += '</body></html>';
-      expect(fromString(testString)).toEqual(expectedResult);
+      expect(htmlToText(testString)).toEqual(expectedResult);
     });
   });
 
@@ -784,7 +784,7 @@ describe('html-to-text', () => {
     it('should handle format blockquote', () => {
       const testString = 'foo<blockquote>test</blockquote>bar';
       const expectedResult = 'foo> test\nbar';
-      expect(fromString(testString)).toEqual(expectedResult);
+      expect(htmlToText(testString)).toEqual(expectedResult);
     });
   });
 });
