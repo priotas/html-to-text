@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import * as parseArgs from 'minimist';
 
 import { htmlToText } from './html-to-text';

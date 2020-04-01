@@ -1,6 +1,6 @@
 /* eslint max-len: "off" */
 
-import *  as fs from 'fs';
+import * as fs from 'fs';
 import * as path from 'path';
 
 import { htmlToText } from '../html-to-text';

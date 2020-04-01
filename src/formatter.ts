@@ -44,9 +44,9 @@ function formatLineBreak(elem: any, fn: Function, options: any) {
 function formatParagraph(elem: any, fn: Function, options: any) {
   const paragraph = fn(elem.children, options);
   if (options.singleNewLineParagraphs) {
-    return `${paragraph} '\n`;
+    return `${paragraph}\n`;
   } else {
-    return `${paragraph} '\n\n`;
+    return `${paragraph}\n\n`;
   }
 }
 
@@ -55,7 +55,7 @@ function formatHeading(elem: any, fn: Function, options: any) {
   if (options.uppercaseHeadings) {
     heading = heading.toUpperCase();
   }
-  return heading + '\n';
+  return `${heading}\n`;
 }
 
 // If we have both href and anchor text, format it in a useful manner:

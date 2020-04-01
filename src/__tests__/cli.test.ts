@@ -3,7 +3,12 @@ import * as path from 'path';
 
 const exec = require('child_process').exec;
 
-function runWithInputAndExpect(input: any, args: any, expectedOutput: any, done: any) {
+function runWithInputAndExpect(
+  input: any,
+  args: any,
+  expectedOutput: any,
+  done: any
+) {
   exec(
     'echo "' + input.replace(/"/g, '\\"') + '" | ts-node src/cli.ts ' + args,
     function callback(error: any, stdout: any, stderr: any) {
@@ -93,10 +98,16 @@ describe('cli arguments', () => {
   });
 
   it('should support --tables definitions with commas', function (done) {
-    const expectedTxt = fs.readFileSync(path.join(__dirname, 'test.txt'), 'utf8');
+    const expectedTxt = fs.readFileSync(
+      path.join(__dirname, 'test.txt'),
+      'utf8'
+    );
 
     function runWithArgs(args: any, callback: any) {
-      exec(`cat ${path.join(__dirname, 'test.html')} | ts-node src/cli.ts ` + args, callback);
+      exec(
+        `cat ${path.join(__dirname, 'test.html')} | ts-node src/cli.ts ` + args,
+        callback
+      );
     }
 
     runWithArgs('--tables=#invoice,.address', function callback(
