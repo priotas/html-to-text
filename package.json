@@ -6,10 +6,10 @@
   "scripts": {
     "build": "rm -Rf dist && tsc",
     "test": "jest",
-    "prepublish": "npm test && npm build",
-    "prettier:check": "prettier --ignore-path .eslintignore --check '**/*.{js,jsx,ts,tsx,md,json}'",
-    "lint": "npm run prettier:check && eslint --ext .js,.jsx,.ts,.tsx .",
-    "lint:fix": "eslint.js --ext .js,.jsx,.ts,.tsx . --fix; prettier --ignore-path .eslintignore --write '**/*.{js,jsx,ts,tsx,md,json}'"
+    "prepublish": "yarn run test && yarn run build",
+    "prettier:check": "yarn run prettier --ignore-path .eslintignore --check '**/*.{js,jsx,ts,tsx,md,json}'",
+    "lint": "yarn run prettier:check && eslint --ext .js,.jsx,.ts,.tsx .",
+    "lint:fix": "eslint --ext .js,.jsx,.ts,.tsx . --fix; prettier --ignore-path .eslintignore --write '**/*.{js,jsx,ts,tsx,md,json}'"
   },
   "author": {
     "name": "Malte Legenhausen",
@@ -33,8 +33,7 @@
     "eslint-plugin-simple-import-sort": "^5.0.2",
     "he": "^1.2.0",
     "htmlparser2": "^4.1.0",
-    "lodash": "^4.17.15",
-    "minimist": "^1.2.5"
+    "lodash": "^4.17.15"
   },
   "keywords": [
     "html",
@@ -46,9 +45,6 @@
   ],
   "engines": {
     "node": ">= 10.0.0"
-  },
-  "bin": {
-    "html-to-text": "./bin/cli.js"
   },
   "devDependencies": {
     "@types/jest": "^25.1.4",

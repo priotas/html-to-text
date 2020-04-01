@@ -1,5 +1,14 @@
 # Changelog
 
+## DEV
+
+- Migrated to Typescript
+- Migrated to Jest
+- Removed cli and minimist
+- Removed `.fromString`
+- Removed Browser support
+- Yarn instead of NPM
+
 ## Version 5.1.1
 
 - `preserveNewLines` whitespace issue fixed [#162](https://github.com/werk85/node-html-to-text/pull/162)

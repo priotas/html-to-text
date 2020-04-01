@@ -6,8 +6,8 @@ const defaultFormat = require("./formatter");
 const helper_1 = require("./helper");
 // Which type of tags should not be parsed
 const SKIP_TYPES = ['style', 'script'];
-function htmlToText(html, options) {
-    options = Object.assign({
+function htmlToText(html, _options) {
+    const finalOptions = Object.assign({
         wordwrap: 80,
         tables: [],
         preserveNewlines: false,
@@ -29,16 +29,16 @@ function htmlToText(html, options) {
             forceWrapOnLimit: false
         },
         unorderedListItemPrefix: ' * '
-    }, options || {});
+    }, _options || {});
     const handler = new htmlparser2_1.DefaultHandler();
     new htmlparser2_1.Parser(handler).parseComplete(html);
-    options.lineCharCount = 0;
+    finalOptions.lineCharCount = 0;
     let result = '';
-    let baseElements = Array.isArray(options.baseElement)
-        ? options.baseElement
-        : [options.baseElement];
+    let baseElements = Array.isArray(finalOptions.baseElement)
+        ? finalOptions.baseElement
+        : [finalOptions.baseElement];
     for (let idx = 0; idx < baseElements.length; ++idx) {
-        result += walk(filterBody(handler.dom, options, baseElements[idx]), options);
+        result += walk(filterBody(handler.dom, finalOptions, baseElements[idx]), finalOptions);
     }
     return lodash_1.trimEnd(result);
 }
@@ -177,8 +177,4 @@ function walk(dom, options, result) {
     });
     return result;
 }
-function fromString(str, options) {
-    return htmlToText(str, options || {});
-}
-exports.fromString = fromString;
 //# sourceMappingURL=html-to-text.js.map

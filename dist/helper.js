@@ -33,7 +33,6 @@ function splitLongWord(word, options) {
                 }
                 else {
                     word = firstLine + remainingChars;
-                    console.log(options);
                     if (!options.preserveNewlines) {
                         word += '\n';
                     }

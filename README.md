@@ -13,7 +13,6 @@ An advanced converter that parses HTML and returns beautiful text. It was mainly
 - Automatic extraction of href information from links.
 - `<br>` conversion to `\n`.
 - Unicode support.
-- Runs in browser and server environments.
 
 ## Installation
 
@@ -21,18 +20,16 @@ An advanced converter that parses HTML and returns beautiful text. It was mainly
 npm install html-to-text
 ```
 
-Or when you want to use it as command line interface it is recommended to install it globally via
-
 ```
-npm install html-to-text -g
+yarn add html-to-text
 ```
 
 ## Usage
 
 ```js
-const htmlToText = require('html-to-text');
+const { htmlToText } = require('html-to-text');
 
-const text = htmlToText.fromString('<h1>Hello World</h1>', {
+const text = htmlToText('<h1>Hello World</h1>', {
   wordwrap: 130
 });
 console.log(text); // Hello World
@@ -68,12 +65,12 @@ By using the `format` option, you can specify formatting for these elements: `te
 Each key must be a function which eventually receive `elem` (the current elem), `fn` (the next formatting function) and `options` (the options passed to html-to-text).
 
 ```js
-var htmlToText = require('html-to-text');
+const { htmlToText } = require('html-to-text');
 
-var text = htmlToText.fromString('<h1>Hello World</h1>', {
+const text = htmlToText('<h1>Hello World</h1>', {
   format: {
     heading: function (elem, fn, options) {
-      var h = fn(elem.children, options);
+      const h = fn(elem.children, options);
       return '====\n' + h.toUpperCase() + '\n====';
     }
   }
@@ -81,24 +78,6 @@ var text = htmlToText.fromString('<h1>Hello World</h1>', {
 
 console.log(text);
 ```
-
-## Command Line Interface
-
-It is possible to use html-to-text as command line interface. This allows an easy validation of your generated text and the integration in other systems that does not run on node.js.
-
-`html-to-text` uses `stdin` and `stdout` for data in and output. So you can use `html-to-text` the following way:
-
-```
-cat example/test.html | html-to-text > test.txt
-```
-
-There also all options available as described above. You can use them like this:
-
-```
-cat example/test.html | html-to-text --tables=#invoice,.address --wordwrap=100 > test.txt
-```
-
-The `tables` option has to be declared as comma separated list without whitespaces.
 
 ## Example
 
