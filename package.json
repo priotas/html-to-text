@@ -1,6 +1,6 @@
 {
-  "name": "html-to-text",
-  "version": "5.1.1",
+  "name": "@priotas/html-to-text",
+  "version": "6.0.0",
   "description": "Advanced html to plain text converter",
   "main": "dist/html-to-text.js",
   "scripts": {
@@ -15,14 +15,14 @@
     "name": "Malte Legenhausen",
     "email": "legenhausen@werk85.de"
   },
-  "homepage": "https://github.com/werk85/node-html-to-text",
+  "homepage": "https://github.com/priotas/html-to-text",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/werk85/node-html-to-text.git"
+    "url": "git://github.com/priotas/html-to-text.git"
   },
   "bugs": {
-    "url": "https://github.com/werk85/node-html-to-text/issues"
+    "url": "https://github.com/priotas/html-to-text/issues"
   },
   "dependencies": {
     "@types/he": "^1.1.1",
